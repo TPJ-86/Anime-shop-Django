@@ -1,36 +1,23 @@
 from django.shortcuts import render
-from django.views.generic import ListView, DetailView
-from .models import Category, Product
+from .models import Product, Category
+
 
 def home(request):
-    products = Product.objects.all()[:8]
-    categories = Category.objects.all()
-    return render(request, 'home.html', {  # Просто home.html
-        'products': products,
-        'categories': categories
-    })
+    """Главная страница"""
+    return render(request, 'home.html')
 
-class ProductListView(ListView):
-    model = Product
-    template_name = 'product_list.html'  # Просто product_list.html
-    context_object_name = 'products'
+def products(request):
+    """Страница всех товаров"""
+    all_products = Product.objects.all() 
+    return render(request, 'products.html', {'products': all_products})
 
-class ProductDetailView(DetailView):
-    model = Product
-    template_name = 'product_detail.html'
-    context_object_name = 'product'
-
-class CategoryListView(ListView):
-    model = Category
-    template_name = 'category_list.html'
-    context_object_name = 'categories'
-
-class CategoryDetailView(DetailView):
-    model = Category
-    template_name = 'category_detail.html'
-    context_object_name = 'category'
+def product_detail(request, id):
+    """Страница одного товара"""
+    try:
+        product = Product.objects.get(id=id)  # Находим товар по ID
+    except Product.DoesNotExist:
+        # Если товар не найден - покажем 404
+        from django.http import Http404
+        raise Http404("Товар не найден")
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['products'] = Product.objects.filter(category=self.object)
-        return context
+    return render(request, 'product_detail.html', {'product': product})

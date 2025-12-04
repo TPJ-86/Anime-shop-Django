@@ -1,72 +1,105 @@
 {% extends 'base.html' %}
 
-{% block title %}Главная - Anime Shop{% endblock %}
-
 {% block content %}
-    <!-- Герой секция -->
+    <!-- Hero Section -->
     <section class="hero">
-        <h1>Добро пожаловать в Anime Shop!</h1>
-        <p>Лучшие товары для настоящих отаку</p>
-        <a href="/products/" class="hero-btn">Смотреть все товары</a>
+        <h1>Добро пожаловать в мир аниме! 🌸</h1>
+        <p style="font-size: 1.2rem; color: #666; max-width: 600px; margin: 0 auto 2rem;">
+            Коллекционные товары из ваших любимых сериалов
+        </p>
+        <a href="/products/" class="btn">Смотреть все товары →</a>
     </section>
 
-    <!-- Категории -->
-    <h2>Категории товаров</h2>
-    <div class="categories">
-        {% for category in categories %}
-            <a href="/categories/{{ category.id }}/" class="category-card">
-                <h3>{{ category.name }}</h3>
-                <p>{{ category.description|default:"Товары категории" }}</p>
-            </a>
-        {% empty %}
-            <p>Категории пока не добавлены</p>
-        {% endfor %}
-    </div>
-
-    <!-- Популярные товары -->
-    <h2>Популярные товары</h2>
-    <div class="products-grid">
+    <!-- Products -->
+    <h2 style="margin-bottom: 1rem;">🔥 Популярные товары</h2>
+    
+    {% if products %}
+    <div class="grid">
         {% for product in products %}
-            <div class="product-card">
-                <div class="product-image">
-                    {% if product.category.name == "Фигурки" %}🗿
-                    {% elif product.category.name == "Одежда" %}👕
-                    {% elif product.category.name == "Аксессуары" %}🎀
-                    {% elif product.category.name == "Комиксы" %}📚
-                    {% else %}🎁
+        <div class="product-card" style="
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
+        ">
+            <!-- Product Image -->
+            <div style="
+                height: 180px;
+                background: linear-gradient(45deg, #a18cd1, #fbc2eb);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 3rem;
+                color: white;
+            ">
+                {% if product.category.name == "Фигурки" %}🗿
+                {% elif product.category.name == "Одежда" %}👕
+                {% elif product.category.name == "Комиксы" %}📚
+                {% else %}🎁
+                {% endif %}
+            </div>
+            
+            <!-- Product Info -->
+            <div style="padding: 1.5rem;">
+                <h3 style="margin-bottom: 0.5rem;">{{ product.name }}</h3>
+                
+                <div style="
+                    display: inline-block;
+                    background: #e9ecef;
+                    padding: 0.3rem 0.8rem;
+                    border-radius: 12px;
+                    font-size: 0.85rem;
+                    margin-bottom: 1rem;
+                ">
+                    {{ product.category.name }}
+                </div>
+                
+                <div style="
+                    font-size: 1.5rem;
+                    font-weight: bold;
+                    color: #ff6b6b;
+                    margin-bottom: 0.5rem;
+                ">
+                    {{ product.price }} ₽
+                </div>
+                
+                <div style="color: #666; margin-bottom: 1rem;">
+                    {% if product.stock > 10 %}
+                        ✅ В наличии: {{ product.stock }} шт.
+                    {% elif product.stock > 0 %}
+                        ⚠️ Осталось мало: {{ product.stock }} шт.
+                    {% else %}
+                        ❌ Нет в наличии
                     {% endif %}
                 </div>
-                <div class="product-name">{{ product.name }}</div>
-                <div class="product-price">{{ product.price }} ₽</div>
-                <div>В наличии: {{ product.stock }} шт.</div>
-                <div>Категория: {{ product.category.name }}</div>
-                <a href="/products/{{ product.id }}/" class="btn">Подробнее</a>
-            </div>
-        {% empty %}
-            <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
-                <h3>Товаров пока нет</h3>
-                <p>Добавьте товары через админ-панель</p>
-                <a href="/admin/" class="btn">Перейти в админку</a>
-            </div>
-        {% endfor %}
-    </div>
-
-    <!-- Статистика -->
-    <div style="background: white; padding: 30px; border-radius: 8px; margin-top: 40px; text-align: center;">
-        <h2>Наша статистика</h2>
-        <div style="display: flex; justify-content: space-around; margin-top: 20px;">
-            <div>
-                <h3 style="color: #6a11cb;">{{ products|length }}</h3>
-                <p>Товаров</p>
-            </div>
-            <div>
-                <h3 style="color: #2575fc;">{{ categories|length }}</h3>
-                <p>Категорий</p>
-            </div>
-            <div>
-                <h3 style="color: #ff6b6b;">24/7</h3>
-                <p>Поддержка</p>
+                
+                <a href="/products/{{ product.id }}/" class="btn" style="width: 100%; text-align: center;">
+                    Подробнее
+                </a>
             </div>
         </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div style="
+        text-align: center;
+        padding: 3rem;
+        background: white;
+        border-radius: 15px;
+        border: 2px dashed #ddd;
+    ">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">📦</div>
+        <h3>Товаров пока нет</h3>
+        <p>Добавьте товары через админку</p>
+        <a href="/admin/" class="btn" style="margin-top: 1rem;">Добавить товары</a>
+    </div>
+    {% endif %}
+    
+    <!-- Call to Action -->
+    <div style="text-align: center; margin-top: 3rem; padding: 2rem; background: white; border-radius: 15px;">
+        <h3>Ищешь что-то конкретное? 🔍</h3>
+        <p>Посмотри все товары в нашем каталоге</p>
+        <a href="/products/" class="btn">Весь каталог →</a>
     </div>
 {% endblock %}

@@ -1,195 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Товары - Anime Shop</title>
+    <title>Товары</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        /* Header */
-        header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 1rem 0;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-        }
-        
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #764ba2;
-            text-decoration: none;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 1.5rem;
-            list-style: none;
-        }
-        
-        .nav-links a {
-            text-decoration: none;
-            color: #333;
-            font-weight: 500;
-        }
-        
-        .nav-links a:hover {
-            color: #764ba2;
-        }
-        
-        /* Main Content */
-        main {
-            padding: 2rem 0;
-        }
-        
-        h1 {
-            color: white;
-            text-align: center;
-            margin-bottom: 2rem;
-            font-size: 2.5rem;
-        }
-        
-        /* Products Grid */
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .product-card {
-            background: white;
-            border-radius: 15px;
-            padding: 1.5rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-        }
-        
-        .product-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .product-name {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-        
-        .product-price {
-            font-size: 1.5rem;
-            color: #764ba2;
-            font-weight: bold;
-            margin: 0.5rem 0;
-        }
-        
-        .product-category {
-            display: inline-block;
-            background: #e0e0e0;
-            padding: 0.2rem 0.8rem;
-            border-radius: 12px;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-        
-        .btn {
-            display: inline-block;
-            background: #764ba2;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            text-decoration: none;
-            margin-top: 1rem;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            background: white;
-            border-radius: 15px;
-            grid-column: 1 / -1;
-        }
-        
-        /* Footer */
-        footer {
-            background: rgba(0,0,0,0.8);
-            color: white;
-            text-align: center;
-            padding: 1.5rem;
-            margin-top: 3rem;
-            border-radius: 15px 15px 0 0;
-        }
+        body { font-family: Arial; padding: 20px; background: #f0f0f0; }
+        .product { background: white; padding: 15px; margin: 10px; border-radius: 10px; }
+        h1 { color: #333; }
+        a { color: blue; text-decoration: none; }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <nav class="navbar">
-                <a href="/" class="logo">🎌 Anime Shop</a>
-                <ul class="nav-links">
-                    <li><a href="/">🏠 Главная</a></li>
-                    <li><a href="/products/">📦 Товары</a></li>
-                    <li><a href="/admin/">⚙️ Админка</a></li>
-                </ul>
-            </nav>
+    <h1>📦 Наши товары</h1>
+    <a href="/">← На главную</a>
+    
+    <div style="margin-top: 20px;">
+    {% for product in products %}
+        <div class="product">
+            <h3>{{ product.name }}</h3>
+            <p>💰 Цена: {{ product.price }} руб.</p>
+            <p>📦 Остаток: {{ product.stock }} шт.</p>
+            <p>🏷️ Категория: {{ product.category.name }}</p>
+            <a href="/products/{{ product.id }}/">Подробнее →</a>
         </div>
-    </header>
-
-    <main class="container">
-        <h1>📦 Все товары</h1>
-        
-        <div class="products-grid">
-            {% for product in products %}
-                <div class="product-card">
-                    <div class="product-name">{{ product.name }}</div>
-                    <span class="product-category">{{ product.category.name }}</span>
-                    <div class="product-price">{{ product.price }} ₽</div>
-                    <div style="margin: 0.5rem 0;">
-                        {% if product.stock > 10 %}
-                            ✅ В наличии: {{ product.stock }} шт.
-                        {% elif product.stock > 0 %}
-                            ⚠️ Осталось мало: {{ product.stock }} шт.
-                        {% else %}
-                            ❌ Нет в наличии
-                        {% endif %}
-                    </div>
-                    <a href="/products/{{ product.id }}/" class="btn">Подробнее</a>
-                </div>
-            {% empty %}
-                <div class="empty-state">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">📦</div>
-                    <h3>Товаров пока нет</h3>
-                    <p>Добавьте товары через админ-панель</p>
-                    <a href="/admin/" class="btn" style="margin-top: 1rem;">Перейти в админку</a>
-                </div>
-            {% endfor %}
+    {% empty %}
+        <div style="background: white; padding: 30px; text-align: center; border-radius: 10px;">
+            <h3>😔 Товаров пока нет</h3>
+            <p>Добавьте товары через админку:</p>
+            <a href="/admin/" style="background: #4CAF50; color: white; padding: 10px 20px; border-radius: 5px;">
+                Перейти в админку
+            </a>
         </div>
-    </main>
-
-    <footer>
-        <div class="container">
-            <p>&copy; 2024 Anime Shop. Магазин аниме товаров</p>
-        </div>
-    </footer>
+    {% endfor %}
+    </div>
 </body>
 </html>
